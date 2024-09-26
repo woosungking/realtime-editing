@@ -5,9 +5,23 @@ services:
     image: redis:latest
     container_name: redis
     ports:
-      - "6379:6379"
+      - "6379:6379"          # Redis 기본 포트
     volumes:
-      - redis-data:/data
+      - redis-data:/data      # Redis 데이터 저장 경로를 호스트와 연결
+    restart: always           # 컨테이너 자동 재시작 설정
+
+  rabbitmq:
+    image: rabbitmq:3-management  # 관리 인터페이스를 포함한 RabbitMQ 이미지 사용
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"           # RabbitMQ 기본 통신 포트
+      - "15672:15672"         # RabbitMQ 관리 인터페이스 포트
+      - "61613:61613"         # STOMP 프로토콜 포트
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    restart: always
 
 volumes:
   redis-data:
+    driver: local              # Redis 볼륨을 호스트에 로컬로 저장
