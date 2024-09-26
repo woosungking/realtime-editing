@@ -51,6 +51,5 @@ public class ChatController {
 		// rabbitTemplate.convertSendAndReceive("/topic.room.1", message.getContent());
 		// 이 부분은 ACK를 받아야 다음작업으로 넘어가기때문에, 웹소켓에서 쓰기에는 너무 느림.
 		simpMessagingTemplate.convertAndSend("/topic/room.1", message.getContent());
-
 	}
 }
