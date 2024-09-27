@@ -5,6 +5,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 @Service
 public class RedisPublisher {
 	private final RedisTemplate<String, Object> redisTemplate;
@@ -14,6 +16,10 @@ public class RedisPublisher {
 	}
 
 	public void publisher(ChannelTopic topic, MessageRequest message){
-		redisTemplate.convertAndSend(topic.getTopic(), message);
+		try {
+			redisTemplate.convertAndSend(topic.getTopic(), message);
+		} catch (Exception e) {
+			System.err.println("메시지 직렬화 오류: " + e.getMessage());
+		}
 	}
 }

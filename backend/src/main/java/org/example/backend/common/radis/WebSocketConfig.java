@@ -22,7 +22,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 	@Override
 	public void registerStompEndpoints(StompEndpointRegistry registry) {
 		// SockJS 엔드포인트에 CORS 설정 추가
-		registry.addEndpoint("/websocket")
+		registry.addEndpoint("/ws")
 			.setAllowedOrigins("http://localhost:5173") // 허용할 도메인 지정
 			.withSockJS(); // SockJS를 지원
 	}
@@ -31,8 +31,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
 	@Override
 	public void configureMessageBroker(MessageBrokerRegistry registry) {
-		registry.setApplicationDestinationPrefixes("/publish");
-		registry.enableSimpleBroker("/subscribe");
+		registry.setApplicationDestinationPrefixes("/publish"); //프론트에서 send요청을 하는 url
+		registry.enableSimpleBroker("/topic");
 
 
 	}
