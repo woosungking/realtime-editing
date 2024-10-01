@@ -1,48 +1,49 @@
-// package org.example.backend.common;
+ package org.example.backend.common.radis;
 //
 // import org.example.backend.domain.redis.service.RedisSubscriber;
-// import org.springframework.context.annotation.Bean;
-// import org.springframework.context.annotation.Configuration;
-// import org.springframework.data.redis.connection.RedisConnectionFactory;
-// import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
-// import org.springframework.data.redis.core.RedisTemplate;
-// import org.springframework.data.redis.listener.ChannelTopic;
-// import org.springframework.data.redis.listener.RedisMessageListenerContainer;
-// import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
-// import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
-// import org.springframework.data.redis.serializer.StringRedisSerializer;
-//
-// import jakarta.annotation.PostConstruct;
-//
-// @Configuration
-// public class RedisConfig {
-//
-// 	@Bean
-// 	public RedisConnectionFactory redisConnectionFactory(){
-//
-// 		return new LettuceConnectionFactory("localhost", 6379);
-// 	}
-// 	// 레디스와의 연결을 위한 Connection생성을 해주는 담당, Lettuce를 사용함.
-// 	@Bean
-// 	public RedisTemplate<String,Object> redisTemplate(){
-// 		//레디스에 데이터를 읽고 쓰기위해서는 직렬화가 일어나야하는데, 정의를 해주는곳임
-// 		RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
-//
-// 		// Redis Connection Factory 설정
-// 		redisTemplate.setConnectionFactory(redisConnectionFactory());
-//
-// 		// 키를 문자열로 직렬화
-// 		redisTemplate.setKeySerializer(new StringRedisSerializer());
-//
-// 		// 값 직렬화: MessageRequest 객체를 JSON 형식으로 직렬화
-// 		Jackson2JsonRedisSerializer<Object> serializer = new Jackson2JsonRedisSerializer<>(Object.class);
-// 		redisTemplate.setValueSerializer(serializer);
-//
-// 		// 기본 직렬화 설정 (키와 값의 기본 직렬화 형식)
-// 		redisTemplate.setDefaultSerializer(new StringRedisSerializer());
-//
-// 		return redisTemplate;
-// 	}
+ import org.example.backend.domain.message.dto.MessageRequest;
+ import org.springframework.context.annotation.Bean;
+ import org.springframework.context.annotation.Configuration;
+ import org.springframework.data.redis.connection.RedisConnectionFactory;
+ import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
+ import org.springframework.data.redis.core.RedisTemplate;
+ import org.springframework.data.redis.listener.ChannelTopic;
+ import org.springframework.data.redis.listener.RedisMessageListenerContainer;
+ import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
+ import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
+ import org.springframework.data.redis.serializer.StringRedisSerializer;
+
+ import jakarta.annotation.PostConstruct;
+
+ @Configuration
+ public class RedisConfig {
+
+ 	@Bean
+ 	public RedisConnectionFactory redisConnectionFactory(){
+
+ 		return new LettuceConnectionFactory("localhost", 6379);
+ 	}
+ 	// 레디스와의 연결을 위한 Connection생성을 해주는 담당, Lettuce를 사용함.
+ 	@Bean
+ 	public RedisTemplate<String,Object> redisTemplate(){
+ 		//레디스에 데이터를 읽고 쓰기위해서는 직렬화가 일어나야하는데, 정의를 해주는곳임
+ 		RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
+
+        // Redis Connection Factory 설정
+        redisTemplate.setConnectionFactory(redisConnectionFactory());
+
+        // 키 직렬화 설정
+        StringRedisSerializer keySerializer = new StringRedisSerializer();
+        redisTemplate.setKeySerializer(keySerializer);
+
+        // 값 직렬화 설정: MessageRequest 객체를 JSON 형식으로 직렬화
+        Jackson2JsonRedisSerializer<Object> valueSerializer = new Jackson2JsonRedisSerializer<>(Object.class);
+        redisTemplate.setValueSerializer(valueSerializer);
+
+
+        return redisTemplate;
+ 	}
+
 //
 // 	@Bean
 // 	public MessageListenerAdapter listenerAdapter(RedisSubscriber subscriber) {
@@ -74,4 +75,4 @@
 // 		System.out.println("RedisConfig initialized");
 // 		// 필요하다면 RedisTemplate을 이용하여 초기 데이터를 설정할 수도 있음
 // 	}
-// }
+ }

@@ -22,7 +22,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
     implementation 'org.springframework.boot:spring-boot-starter-amqp'
-    implementation 'org.springframework.boot:spring-boot-starter-reactor-netty'  // 버전 제거
+    implementation 'org.springframework.boot:spring-boot-starter-reactor-netty'
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
@@ -33,4 +33,14 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+// 컴파일 시 UTF-8 인코딩 설정
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+// JVM 실행 시 UTF-8 인코딩 설정
+tasks.withType(JavaExec) {
+    jvmArgs = ['-Dfile.encoding=UTF-8']
 }

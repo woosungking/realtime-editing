@@ -3,8 +3,8 @@ package org.example.backend.domain.message.service;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Queue;
 
+import org.example.backend.domain.redis.service.RedisService;
 import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -14,17 +14,19 @@ import org.springframework.web.client.RestTemplate;
 public class QueueSchedulingService {
 
 	private final AmqpAdmin amqpAdmin;
-	private final RestTemplate restTemplate;
-
+	private final RestTemplate restTemplate; // 외부 api요청 보내기 가능함, 레빗에다 보내는 중인데 설정파일을 레빗에 의존적이게 적어놨으니 참고
 	private final QueueService queueService;
 
-	public QueueSchedulingService(AmqpAdmin amqpAdmin, RestTemplate restTemplate, QueueService queueService) {
+	private final RedisService redisService;
+
+	public QueueSchedulingService(AmqpAdmin amqpAdmin, RestTemplate restTemplate, QueueService queueService, RedisService redisService) {
 		this.amqpAdmin = amqpAdmin;
 		this.restTemplate = restTemplate;
 		this.queueService = queueService;
+		this.redisService = redisService;
 	}
 
-	@Scheduled(fixedRate = 10000)
+	@Scheduled(fixedRate = 60000)
 	public void emptyQueueCleaning(){
 		List<Map<String,Object>> queueList = restTemplate.getForObject("http://localhost:15672/api/queues", List.class);
 		// 테스트 해보니까 아래와 같은 형식임. List<Map<"string","object">> 로 받으면 되겠다.
@@ -62,6 +64,12 @@ public class QueueSchedulingService {
 			}
 			}
 
+		}
+
+		@Scheduled(fixedRate = 10000)
+		public void cachingData(){
+			redisService.getAllValue();
+			System.out.println("ㅋㅋㅋ");
 		}
 
 	}

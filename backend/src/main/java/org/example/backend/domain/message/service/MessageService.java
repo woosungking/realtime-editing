@@ -1,10 +1,8 @@
 package org.example.backend.domain.message.service;
 
 import org.example.backend.domain.message.dto.MessageRequest;
-import org.springframework.amqp.core.Queue;
-import org.springframework.amqp.core.TopicExchange;
+import org.example.backend.domain.redis.service.RedisService;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.data.redis.listener.Topic;
 import org.springframework.stereotype.Service;
 
 import jakarta.annotation.Nullable;
@@ -16,12 +14,15 @@ public class MessageService {
 	private final BindingService bindingService;
 	private final RabbitTemplate rabbitTemplate;
 
+	private final RedisService redisService;
 
-	public MessageService(QueueService queueService, ExchangeService exchangeService, BindingService bindingService, RabbitTemplate rabbitTemplate) {
+
+	public MessageService(QueueService queueService, ExchangeService exchangeService, BindingService bindingService, RabbitTemplate rabbitTemplate, RedisService redisService) {
 		this.queueService = queueService;
 		this.exchangeService = exchangeService;
 		this.bindingService = bindingService;
 		this.rabbitTemplate = rabbitTemplate;
+		this.redisService = redisService;
 	}
 
 	public void validation(Long roomId, @Nullable String exchangeName){
@@ -36,9 +37,15 @@ public class MessageService {
 		System.out.println("sendMessage 실행");
 		validation(roomId,exchangeName);
 		System.out.println("유효성 검사 종료");
-
+		//레디스 저장 로직 할껀데, 아이디어는 키값으로는 "room.*" value 는 message로 ㄱㄱ
 		rabbitTemplate.convertSendAndReceive(exchangeName,"room."+roomId,message);
+		redisService.setValue(String.valueOf(roomId),message);
 		System.out.println("전달완료여");
+	}
+
+	public MessageRequest popMessage(Long roomId){
+		MessageRequest message = (MessageRequest)rabbitTemplate.receiveAndConvert("room."+roomId);
+		return message;
 	}
 
 }

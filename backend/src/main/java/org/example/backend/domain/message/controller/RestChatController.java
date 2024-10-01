@@ -39,8 +39,10 @@ public class RestChatController {
 
 	@GetMapping("/topic/room.{roomId}")
 	public MessageRequest sendMessage(@PathVariable("roomId") Long roomId){
-		MessageRequest messageRequest = (MessageRequest)rabbitTemplate.receiveAndConvert("chat.queue");
-		return messageRequest;
+
+//		MessageRequest messageRequest = (MessageRequest)rabbitTemplate.receiveAndConvert("chat.queue");
+
+		return messageService.popMessage(roomId);
 
 	}
 }
