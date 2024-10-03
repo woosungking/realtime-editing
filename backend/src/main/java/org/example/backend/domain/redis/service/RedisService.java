@@ -2,7 +2,8 @@ package org.example.backend.domain.redis.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.example.backend.domain.message.dto.MessageRequest;
+import org.example.backend.domain.message.entity.Message;
+import org.example.backend.domain.message.service.MessageService;
 import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -15,9 +16,12 @@ public class RedisService {
     private final RedisTemplate<String, Object> redisTemplate;
     private final ObjectMapper objectMapper;
 
-    public RedisService(RedisTemplate<String, Object> redisTemplate, ObjectMapper objectMapper) {
+    private final MessageService messageService;
+
+    public RedisService(RedisTemplate<String, Object> redisTemplate, ObjectMapper objectMapper, MessageService messageService) {
         this.redisTemplate = redisTemplate;
         this.objectMapper = objectMapper;
+        this.messageService = messageService;
     }
 
     public void setValue(String key, Object value) {
@@ -54,7 +58,7 @@ public class RedisService {
 //        }
 //    }
 
-    public void getAllValue(){
+    public void showAllValue(){
         Set<String> allKeys = redisTemplate.keys("*"); //채팅방은 room. 으로 시작하니 필터링을 걸어줌
 
         for(String key : allKeys){
@@ -63,4 +67,21 @@ public class RedisService {
         }
 
     }
-}
+
+    public void getAndSaveAllValue(){
+        Set<String> allkeys = redisTemplate.keys("*");
+        for(String key : allkeys){
+            while (true) {
+                Message message = (Message) redisTemplate.opsForList().rightPop(key);
+                System.out.println(message);
+                messageService.saveMessage(message);
+                if(message == null){
+                    break;
+                }
+            }
+            }
+
+        }
+
+    }
+

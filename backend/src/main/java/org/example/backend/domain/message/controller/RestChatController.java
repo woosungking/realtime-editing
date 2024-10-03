@@ -32,6 +32,7 @@ public class RestChatController {
 	@PostMapping("/chat.enter.{roomId}")
 	public void receiveMessage(@PathVariable("roomId") Long roomId, @RequestBody MessageRequest message){
 		System.out.println(message);
+		message.setRoomId(String.valueOf(roomId));
 		// exchange는 하드코딩으로 넣을거임,
 		messageService.sendMessageToExchanger("chat.exchange",roomId,message);
 

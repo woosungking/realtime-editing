@@ -68,7 +68,8 @@ public class QueueSchedulingService {
 
 		@Scheduled(fixedRate = 10000)
 		public void cachingData(){
-			redisService.getAllValue();
+//			redisService.getAllValue();
+			redisService.getAndSaveAllValue();
 			System.out.println("ㅋㅋㅋ");
 		}
 
