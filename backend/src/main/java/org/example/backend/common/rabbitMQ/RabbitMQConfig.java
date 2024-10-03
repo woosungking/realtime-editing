@@ -26,7 +26,6 @@ public class RabbitMQConfig {
 	//Queue 등록
 	@Bean
 	public Queue queue() {
-
 		return new Queue("chat.queue");
 	}
 

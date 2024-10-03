@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.example.backend.domain.redis.service.RedisService;
 import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -67,8 +68,8 @@ public class QueueSchedulingService {
 		}
 
 		@Scheduled(fixedRate = 10000)
-		public void cachingData(){
-//			redisService.getAllValue();
+		public void cachingData() throws JsonProcessingException {
+//			redisService.showAllValue();
 			redisService.getAndSaveAllValue();
 			System.out.println("ㅋㅋㅋ");
 		}

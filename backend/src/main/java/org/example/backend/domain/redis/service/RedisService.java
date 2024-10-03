@@ -68,16 +68,21 @@ public class RedisService {
 
     }
 
-    public void getAndSaveAllValue(){
+    public void getAndSaveAllValue() throws JsonProcessingException {
         Set<String> allkeys = redisTemplate.keys("*");
         for(String key : allkeys){
             while (true) {
-                Message message = (Message) redisTemplate.opsForList().rightPop(key);
-                System.out.println(message);
-                messageService.saveMessage(message);
-                if(message == null){
+                Object popMessage = redisTemplate.opsForList().rightPop(key);
+                if(popMessage == null){
                     break;
                 }
+                String stredMessage = (String)popMessage;
+                System.out.println(stredMessage);
+                Message message = objectMapper.readValue(stredMessage, Message.class);
+                messageService.saveMessage(message);
+
+
+
             }
             }
 

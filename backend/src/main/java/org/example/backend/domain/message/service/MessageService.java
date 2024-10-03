@@ -13,8 +13,6 @@ import jakarta.annotation.Nullable;
 @Service
 public class MessageService {
 	private final QueueService queueService;
-	private final ExchangeService exchangeService;
-	private final BindingService bindingService;
 	private final RabbitTemplate rabbitTemplate;
 
 	private final RedisService redisService;
@@ -22,10 +20,8 @@ public class MessageService {
 	private final MessageRepository messageRepository;
 
 
-	public MessageService(QueueService queueService, ExchangeService exchangeService, BindingService bindingService, RabbitTemplate rabbitTemplate, @Lazy RedisService redisService, MessageRepository messageRepository) {
+	public MessageService(QueueService queueService, RabbitTemplate rabbitTemplate, @Lazy RedisService redisService, MessageRepository messageRepository) {
 		this.queueService = queueService;
-		this.exchangeService = exchangeService;
-		this.bindingService = bindingService;
 		this.rabbitTemplate = rabbitTemplate;
 		this.redisService = redisService;
 		this.messageRepository = messageRepository;
@@ -39,23 +35,26 @@ public class MessageService {
 
 	}
 
-	public void sendMessageToExchanger(String exchangeName, Long roomId, MessageRequest message){
+	public void sendMessageToExchanger(String exchangeName, Long roomId, Message message){
 		System.out.println("sendMessage 실행");
 		validation(roomId,exchangeName);
 		System.out.println("유효성 검사 종료");
+		System.out.println(message.getContent());
 		//레디스 저장 로직 할껀데, 아이디어는 키값으로는 "room.*" value 는 message로 ㄱㄱ
 		rabbitTemplate.convertSendAndReceive(exchangeName,"room."+roomId,message);
 		redisService.setValue(String.valueOf(roomId),message);
 		System.out.println("전달완료여");
 	}
 
-	public MessageRequest popMessage(Long roomId){
-		MessageRequest message = (MessageRequest)rabbitTemplate.receiveAndConvert("room."+roomId);
+	public Message popMessage(Long roomId){
+		Message message = (Message)rabbitTemplate.receiveAndConvert("room."+roomId);
 		return message;
 	}
 
 	public void saveMessage(Message message){
-	messageRepository.save(message);
+		System.out.println("저장완료여");
+		messageRepository.save(message);
+
 	}
 
 }

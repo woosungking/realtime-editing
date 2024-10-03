@@ -45,7 +45,7 @@ public class ChatController {
 	}
 
 	//기본적으로 chat.queue가 exchange에 바인딩 되어있기 때문에 모든 메시지 처리
-	@RabbitListener(queues = "chat.queue")
+//	@RabbitListener(queues = "chat.queue")
 	public void receive(MessageRequest message) {
 		System.out.println("received : " + message.getContent());
 		// rabbitTemplate.convertSendAndReceive("/topic.room.1", message.getContent());
