@@ -5,6 +5,7 @@ import org.example.backend.domain.message.entity.Message;
 import org.example.backend.domain.message.repository.MessageRepository;
 import org.example.backend.domain.redis.service.RedisService;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import jakarta.annotation.Nullable;
@@ -21,7 +22,7 @@ public class MessageService {
 	private final MessageRepository messageRepository;
 
 
-	public MessageService(QueueService queueService, ExchangeService exchangeService, BindingService bindingService, RabbitTemplate rabbitTemplate, RedisService redisService, MessageRepository messageRepository) {
+	public MessageService(QueueService queueService, ExchangeService exchangeService, BindingService bindingService, RabbitTemplate rabbitTemplate, @Lazy RedisService redisService, MessageRepository messageRepository) {
 		this.queueService = queueService;
 		this.exchangeService = exchangeService;
 		this.bindingService = bindingService;
