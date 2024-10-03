@@ -5,23 +5,37 @@ services:
     image: redis:latest
     container_name: redis
     ports:
-      - "6379:6379"          # Redis 기본 포트
+      - "6379:6379"
     volumes:
-      - redis-data:/data      # Redis 데이터 저장 경로를 호스트와 연결
-    restart: always           # 컨테이너 자동 재시작 설정
+      - redis-data:/data
+    restart: always
 
   rabbitmq:
-    image: rabbitmq:3-management  # 관리 인터페이스를 포함한 RabbitMQ 이미지 사용
+    image: rabbitmq:3-management
     container_name: rabbitmq
     ports:
-      - "5672:5672"           # RabbitMQ 기본 통신 포트
-      - "15672:15672"         # RabbitMQ 관리 인터페이스 포트
-      - "61613:61613"         # STOMP 프로토콜 포트
+      - "5672:5672"
+      - "15672:15672"
+      - "61613:61613"
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
     restart: always
 
+  postgresql:
+    image: postgres:latest
+    container_name: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: postgre
+      POSTGRES_USER: postgre
+      POSTGRES_PASSWORD: 1111
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
 volumes:
   redis-data:
-    driver: local              # Redis 볼륨을 호스트에 로컬로 저장
+    driver: local
+  postgres-data:
+    driver: local
